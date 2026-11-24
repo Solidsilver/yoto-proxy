@@ -219,6 +219,15 @@ func TestAPIRequiresSession(t *testing.T) {
 	if rec.Code != http.StatusFound || !strings.HasPrefix(rec.Header().Get("Location"), "/auth/login") {
 		t.Errorf("want redirect to login, got %d %s", rec.Code, rec.Header().Get("Location"))
 	}
+	// Icons and the manifest load without a session (iOS home screen, favicons).
+	s.static = fstest.MapFS{"apple-touch-icon.png": {Data: []byte("png")}, "manifest.webmanifest": {Data: []byte("{}")}}
+	for path, ct := range map[string]string{"/apple-touch-icon.png": "image/png", "/manifest.webmanifest": "application/manifest+json"} {
+		rec = httptest.NewRecorder()
+		s.Handler().ServeHTTP(rec, httptest.NewRequest("GET", path, nil))
+		if rec.Code != 200 || rec.Header().Get("Content-Type") != ct {
+			t.Errorf("%s: %d %q", path, rec.Code, rec.Header().Get("Content-Type"))
+		}
+	}
 }
 
 // In header mode, requests act as the logged-in user (mapped through

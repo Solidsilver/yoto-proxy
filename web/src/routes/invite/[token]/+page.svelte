@@ -28,7 +28,7 @@
 
 <div class="page">
 	<div class="card">
-		<span class="logo" aria-hidden="true"><span></span><span></span></span>
+		<img class="logo" src="/logo.png" alt="" width="48" height="48" />
 		{#if error}
 			<h1>Invite unavailable</h1>
 			<p class="muted">{error}</p>
@@ -102,19 +102,7 @@
 		margin-top: 0.25rem;
 	}
 	.logo {
-		display: inline-flex;
-		gap: 5px;
-		align-items: center;
-		justify-content: center;
-		width: 40px;
-		height: 30px;
-		border-radius: 9px;
-		background: var(--accent);
-	}
-	.logo span {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: #fff;
+		width: 48px;
+		height: 48px;
 	}
 </style>

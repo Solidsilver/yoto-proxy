@@ -1,4 +1,6 @@
-# yoto-proxy
+<p align="center"><img src="docs/logo.png" width="128" height="128" alt="yoto-proxy logo"></p>
+
+<h1 align="center">yoto-proxy</h1>
 
 Put your own music and audiobooks on Yoto "Make Your Own" cards, streamed
 from your home server instead of uploaded.

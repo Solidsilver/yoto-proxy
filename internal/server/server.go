@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"mime"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -91,6 +92,9 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("ok")) })
 	mux.HandleFunc("GET /s/{token}/{file}", s.handleStream)
 	mux.HandleFunc("HEAD /s/{token}/{file}", s.handleStream)
+	for _, f := range publicAssets {
+		mux.Handle("GET /"+f, s.spaHandler())
+	}
 
 	// Pocket ID login.
 	mux.HandleFunc("GET /auth/login", s.handleLogin)
@@ -135,6 +139,16 @@ func (s *Server) Handler() http.Handler {
 
 	return logRequests(mux)
 }
+
+// publicAssets are served without login: browsers and iOS fetch icons and
+// the manifest outside the user's session.
+var publicAssets = []string{
+	"favicon.ico", "favicon-32.png", "favicon-64.png", "apple-touch-icon.png",
+	"apple-touch-icon-precomposed.png", "icon-192.png", "icon-512.png", "logo.png",
+	"manifest.webmanifest", "robots.txt",
+}
+
+func init() { _ = mime.AddExtensionType(".webmanifest", "application/manifest+json") }
 
 // spaHandler serves the embedded SvelteKit build, falling back to index.html.
 func (s *Server) spaHandler() http.Handler {

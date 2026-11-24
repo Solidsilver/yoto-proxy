@@ -62,7 +62,7 @@
 <div class="page">
 	<header class="top">
 		<div class="brand">
-			<span class="logo" aria-hidden="true"><span></span><span></span></span>
+			<img class="logo" src="/logo.png" alt="" width="40" height="40" />
 			<h1>Yoto Proxy</h1>
 		</div>
 		{#if me}
@@ -202,20 +202,9 @@
 		letter-spacing: -0.01em;
 	}
 	.logo {
-		display: inline-flex;
-		gap: 5px;
-		align-items: center;
-		justify-content: center;
 		width: 40px;
-		height: 30px;
-		border-radius: 9px;
-		background: var(--accent);
-	}
-	.logo span {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: #fff;
+		height: 40px;
+		border-radius: 10px;
 	}
 	.who {
 		display: flex;
