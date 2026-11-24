@@ -28,7 +28,10 @@
 
 <div class="page">
 	<div class="card">
-		<img class="logo" src="/logo.png" alt="" width="48" height="48" />
+		<picture>
+				<source srcset="/logo-dark.svg" media="(prefers-color-scheme: dark)" />
+				<img class="logo" src="/logo.svg" alt="" width="48" height="48" />
+			</picture>
 		{#if error}
 			<h1>Invite unavailable</h1>
 			<p class="muted">{error}</p>
@@ -100,6 +103,9 @@
 		display: flex;
 		gap: 0.5rem;
 		margin-top: 0.25rem;
+	}
+	picture {
+		display: contents;
 	}
 	.logo {
 		width: 48px;

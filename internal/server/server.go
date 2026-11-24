@@ -143,8 +143,9 @@ func (s *Server) Handler() http.Handler {
 // publicAssets are served without login: browsers and iOS fetch icons and
 // the manifest outside the user's session.
 var publicAssets = []string{
-	"favicon.ico", "favicon-32.png", "favicon-64.png", "apple-touch-icon.png",
-	"apple-touch-icon-precomposed.png", "icon-192.png", "icon-512.png", "logo.png",
+	"favicon.ico", "favicon.svg", "favicon-32.png", "favicon-64.png", "apple-touch-icon.png",
+	"apple-touch-icon-precomposed.png", "icon-192.png", "icon-512.png",
+	"logo.png", "logo.svg", "logo-dark.svg",
 	"manifest.webmanifest", "robots.txt",
 }
 

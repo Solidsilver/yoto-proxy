@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>yoto-proxy</title>
+  <rect x="3" y="3" width="506" height="506" rx="113" fill="#f25c2a"/>
+  <g>
+    <path d="M330 206 A70 70 0 0 1 330 302 M366 172 A118 118 0 0 1 366 336" fill="none" stroke="#faf7f2" stroke-width="24" stroke-linecap="round"/>
+    <rect x="110" y="118" width="188" height="300" rx="28" fill="#e7dfd4"/>
+    <rect x="100" y="104" width="188" height="300" rx="28" fill="#faf7f2"/>
+    <rect x="126" y="138" width="136" height="66" rx="14" fill="#2a2420"/>
+    <circle cx="152" cy="171" r="11" fill="#f25c2a"/>
+    <rect x="176" y="166" width="62" height="10" rx="5" fill="#6a5b50"/>
+    <rect x="126" y="221" width="136" height="66" rx="14" fill="#2a2420"/>
+    <circle cx="152" cy="254" r="11" fill="#e3a93a"/>
+    <rect x="176" y="249" width="62" height="10" rx="5" fill="#6a5b50"/>
+    <rect x="126" y="304" width="136" height="66" rx="14" fill="#2a2420"/>
+    <circle cx="152" cy="337" r="11" fill="#f25c2a"/>
+    <rect x="176" y="332" width="62" height="10" rx="5" fill="#6a5b50"/>
+  </g>
+</svg>

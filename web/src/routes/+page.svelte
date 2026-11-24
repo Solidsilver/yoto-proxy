@@ -62,7 +62,10 @@
 <div class="page">
 	<header class="top">
 		<div class="brand">
-			<img class="logo" src="/logo.png" alt="" width="40" height="40" />
+			<picture>
+				<source srcset="/logo-dark.svg" media="(prefers-color-scheme: dark)" />
+				<img class="logo" src="/logo.svg" alt="" width="40" height="40" />
+			</picture>
 			<h1>Yoto Proxy</h1>
 		</div>
 		{#if me}
@@ -201,10 +204,12 @@
 		font-size: 1.4rem;
 		letter-spacing: -0.01em;
 	}
+	picture {
+		display: contents;
+	}
 	.logo {
 		width: 40px;
 		height: 40px;
-		border-radius: 10px;
 	}
 	.who {
 		display: flex;

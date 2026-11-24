@@ -1,4 +1,9 @@
-<p align="center"><img src="docs/logo.png" width="128" height="128" alt="yoto-proxy logo"></p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.png">
+    <img src="docs/logo.png" width="128" height="128" alt="yoto-proxy logo">
+  </picture>
+</p>
 
 <h1 align="center">yoto-proxy</h1>
 
@@ -153,6 +158,9 @@ cd web && pnpm install && pnpm dev
 - `go build` embeds `web/build`, so run `pnpm build` in `web/` first, or use
   `nix build`.
 - Tests: `go test ./...`, and `pnpm check` in `web/`.
+- Icons: the logo is drawn in `tools/make_icons.py`; run
+  `python3 -I tools/make_icons.py` (needs ImageMagick and Pillow) to
+  regenerate every icon, the README logo and the social preview.
 - The Yoto developer app also needs `http://localhost:3614/auth/yoto/callback`
   as a callback URL for local testing.
 
