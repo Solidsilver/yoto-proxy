@@ -153,3 +153,7 @@ cd web && pnpm install && pnpm dev
 - Tests: `go test ./...`, and `pnpm check` in `web/`.
 - The Yoto developer app also needs `http://localhost:3614/auth/yoto/callback`
   as a callback URL for local testing.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

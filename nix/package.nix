@@ -78,6 +78,7 @@ buildGoModule {
   passthru = { inherit web; };
   meta = {
     description = "Serve Navidrome playlists and albums to Yoto Make Your Own cards";
+    license = lib.licenses.mit;
     mainProgram = "yoto-proxy";
   };
 }
