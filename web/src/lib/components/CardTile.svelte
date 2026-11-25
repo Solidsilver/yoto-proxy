@@ -10,8 +10,14 @@
 
 	let busy = $state<'' | 'sync' | 'rename' | 'rotate' | 'delete'>('');
 	let error = $state('');
+	let more = $state<HTMLDetailsElement>();
+
+	function onWindowClick(e: MouseEvent) {
+		if (more?.open && !more.contains(e.target as Node)) more.open = false;
+	}
 
 	async function run(kind: typeof busy, fn: () => Promise<void>) {
+		if (more) more.open = false;
 		busy = kind;
 		error = '';
 		try {
@@ -48,6 +54,8 @@
 		card.sourceType === 'abs_item' ? 'Audiobook' : card.sourceType === 'navidrome_album' ? 'Album' : 'Playlist'
 	);
 </script>
+
+<svelte:window onclick={onWindowClick} />
 
 <article class:has-error={!!card.lastError}>
 	<div class="cover">
@@ -88,15 +96,24 @@
 			<p class="error">{error || card.lastError}</p>
 		{/if}
 		<div class="actions">
-			<button class="btn small primary" onclick={sync} disabled={!!busy}>
+			<button class="btn small primary sync" onclick={sync} disabled={!!busy}>
 				{busy === 'sync' ? 'Syncing…' : 'Sync now'}
 			</button>
-			<details>
-				<summary class="btn small" aria-label="More actions">⋯</summary>
-				<div class="menu">
-					<button class="btn small" onclick={rename} disabled={!!busy}>Rename</button>
-					<button class="btn small" onclick={rotate} disabled={!!busy}>New stream links</button>
-					<button class="btn small danger" onclick={remove} disabled={!!busy}>Delete</button>
+			<details bind:this={more}>
+				<summary class="btn small more" aria-label="More actions">
+					<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"
+						><circle cx="4.5" cy="10" r="1.8" fill="currentColor" /><circle cx="10" cy="10" r="1.8" fill="currentColor" /><circle
+							cx="15.5"
+							cy="10"
+							r="1.8"
+							fill="currentColor"
+						/></svg
+					>
+				</summary>
+				<div class="menu" role="menu">
+					<button role="menuitem" onclick={rename} disabled={!!busy}>Rename</button>
+					<button role="menuitem" onclick={rotate} disabled={!!busy}>New stream links</button>
+					<button role="menuitem" class="danger" onclick={remove} disabled={!!busy}>Delete</button>
 				</div>
 			</details>
 		</div>
@@ -139,6 +156,11 @@
 	h3 {
 		font-size: 1.05rem;
 		overflow-wrap: anywhere;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 	.meta,
 	.status {
@@ -186,13 +208,23 @@
 	}
 	.actions {
 		display: flex;
+		align-items: center;
 		gap: 0.4rem;
 		margin-top: auto;
 		padding-top: 0.5rem;
 		position: relative;
 	}
-	details {
-		margin-left: auto;
+	.sync {
+		flex: 1;
+		min-height: 36px;
+	}
+	.more {
+		width: 36px;
+		height: 36px;
+		padding: 0;
+	}
+	details[open] .more {
+		background: var(--surface-2);
 	}
 	summary {
 		list-style: none;
@@ -206,12 +238,62 @@
 		bottom: calc(100% + 4px);
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
-		padding: 0.5rem;
+		min-width: 190px;
+		padding: 0.35rem;
 		background: var(--surface);
 		border: 1px solid var(--border);
 		border-radius: 12px;
 		box-shadow: var(--shadow);
 		z-index: 2;
+	}
+	.menu button {
+		border: 0;
+		background: none;
+		text-align: left;
+		padding: 0.65rem 0.75rem;
+		border-radius: 8px;
+		font-weight: 600;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+	.menu button:disabled {
+		opacity: 0.55;
+	}
+	.menu button.danger {
+		color: var(--danger);
+	}
+	@media (hover: hover) {
+		.menu button:hover:not(:disabled) {
+			background: var(--surface-2);
+		}
+	}
+	@media (max-width: 560px) {
+		.cover {
+			margin: 0.45rem 0.45rem 0;
+			border-radius: 8px;
+		}
+		.body {
+			padding: 0.6rem 0.65rem 0.65rem;
+			gap: 0.2rem;
+		}
+		h3 {
+			font-size: 0.98rem;
+		}
+		.meta,
+		.status {
+			font-size: 0.8rem;
+		}
+		.menu {
+			left: 0;
+			min-width: 0;
+		}
+		.menu button {
+			white-space: normal;
+		}
+		.meta {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 </style>

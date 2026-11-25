@@ -139,7 +139,7 @@ func (s *Server) openCover(ctx context.Context, owner, sourceType, coverID strin
 }
 
 // coverVersion changes whenever card art rendering changes, forcing re-upload.
-const coverVersion = "portrait-v1"
+const coverVersion = "portrait-v2"
 
 // syncCard refreshes the card's track list from its source and pushes the
 // result to Yoto, creating the Yoto playlist on first sync. actor is the

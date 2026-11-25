@@ -37,11 +37,15 @@ func Portrait(r io.Reader) ([]byte, error) {
 		// Already portrait (e.g. audiobook covers): fill and crop.
 		drawCover(dst, dst.Bounds(), src, draw.CatmullRom)
 	} else {
-		// Background: fill the card with the art, blurred by scaling it
-		// down to a tiny image and back up with bilinear filtering.
-		small := image.NewRGBA(image.Rect(0, 0, Width/24, Height/24))
-		drawCover(small, small.Bounds(), src, draw.ApproxBiLinear)
-		draw.BiLinear.Scale(dst, dst.Bounds(), small, small.Bounds(), draw.Src, nil)
+		// Background: fill the card with the art, blurred. Blurring at 1/8
+		// scale is cheap; three box passes approximate a Gaussian, and a
+		// smooth upscale keeps it free of blocks.
+		small := image.NewRGBA(image.Rect(0, 0, Width/8, Height/8))
+		drawCover(small, small.Bounds(), src, draw.CatmullRom)
+		for range 3 {
+			boxBlur(small, 4)
+		}
+		draw.CatmullRom.Scale(dst, dst.Bounds(), small, small.Bounds(), draw.Src, nil)
 		darken(dst, 0.72)
 
 		// Foreground: the art at full width, letterboxed in the middle.
@@ -81,4 +85,32 @@ func darken(img *image.RGBA, f float64) {
 		img.Pix[i+1] = uint8(float64(img.Pix[i+1]) * f)
 		img.Pix[i+2] = uint8(float64(img.Pix[i+2]) * f)
 	}
+}
+
+// boxBlur blurs img in place with a (2r+1)-wide box, horizontally then
+// vertically, clamping at the edges.
+func boxBlur(img *image.RGBA, r int) {
+	w, h := img.Rect.Dx(), img.Rect.Dy()
+	tmp := make([]uint8, len(img.Pix))
+	pass := func(from, to []uint8, n, lines int, at func(line, i int) int) {
+		for l := 0; l < lines; l++ {
+			for i := 0; i < n; i++ {
+				var sum [4]int
+				for k := -r; k <= r; k++ {
+					j := min(max(i+k, 0), n-1)
+					o := at(l, j)
+					for c := range 4 {
+						sum[c] += int(from[o+c])
+					}
+				}
+				o := at(l, i)
+				for c := range 4 {
+					to[o+c] = uint8(sum[c] / (2*r + 1))
+				}
+			}
+		}
+	}
+	stride := img.Stride
+	pass(img.Pix, tmp, w, h, func(y, x int) int { return y*stride + x*4 })
+	pass(tmp, img.Pix, h, w, func(x, y int) int { return y*stride + x*4 })
 }

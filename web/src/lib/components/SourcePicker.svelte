@@ -45,7 +45,14 @@
 
 	$effect(() => {
 		dialog.showModal();
-		api.playlists().then((p) => (playlists = p), (e) => (error = e.message));
+		api.playlists().then(
+			(p) => {
+				playlists = p;
+				// Nothing to pick here: start on albums instead.
+				if (!p.length && tab === 'playlists') tab = 'albums';
+			},
+			(e) => (error = e.message)
+		);
 	});
 
 	// Debounced album search.
@@ -140,8 +147,12 @@
 		{#if selected}
 			<button class="btn small" onclick={() => (selected = null)}>← Back</button>
 		{/if}
-		<h2 id="picker-title">{selected ? 'New card' : 'Pick something to put on a card'}</h2>
-		<button class="btn small close" aria-label="Close" onclick={() => dialog.close()}>✕</button>
+		<h2 id="picker-title">{selected ? 'New card' : 'Put on a card'}</h2>
+		<button class="btn close" aria-label="Close" onclick={() => dialog.close()}>
+			<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"
+				><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg
+			>
+		</button>
 	</header>
 
 	{#if error}<p class="error">{error}</p>{/if}
@@ -187,7 +198,7 @@
 		</div>
 		<footer>
 			<button
-				class="btn primary"
+				class="btn primary create"
 				disabled={creating || !title.trim() || !selected.tracks?.length}
 				onclick={create}
 			>
@@ -315,7 +326,9 @@
 <style>
 	dialog {
 		width: min(640px, calc(100vw - 24px));
-		max-height: min(760px, calc(100dvh - 24px));
+		/* A definite height: WebKit collapses flex: 1 scroll areas inside a
+		   dialog that only has a max-height. */
+		height: min(720px, calc(100dvh - 24px));
 		padding: 0;
 		border: 1px solid var(--border);
 		border-radius: var(--radius);
@@ -336,6 +349,12 @@
 		align-items: center;
 		gap: 0.75rem;
 		padding: 1rem 1rem 0.75rem;
+	}
+	.close {
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		flex-shrink: 0;
 	}
 	header h2 {
 		font-size: 1.1rem;
@@ -375,11 +394,12 @@
 		margin: 0;
 		padding: 0.5rem;
 		overflow-y: auto;
-		flex: 1;
+		flex: 1 1 auto;
+		min-height: 0;
 	}
 	.results button {
 		display: grid;
-		grid-template-columns: 48px 1fr;
+		grid-template-columns: 52px minmax(0, 1fr);
 		grid-template-rows: auto auto;
 		column-gap: 0.75rem;
 		align-items: center;
@@ -391,13 +411,18 @@
 		background: transparent;
 		cursor: pointer;
 	}
-	.results button:hover {
+	.results button:active {
 		background: var(--surface-2);
+	}
+	@media (hover: hover) {
+		.results button:hover {
+			background: var(--surface-2);
+		}
 	}
 	.results img {
 		grid-row: span 2;
-		width: 48px;
-		height: 48px;
+		width: 52px;
+		height: 52px;
 		border-radius: 8px;
 		object-fit: cover;
 		background: var(--surface-2);
@@ -434,12 +459,18 @@
 	.results .muted {
 		font-size: 0.875rem;
 	}
+	.results button .muted {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 	.pad {
 		padding: 1rem;
 	}
 	.preview {
 		overflow-y: auto;
-		flex: 1;
+		flex: 1 1 auto;
+		min-height: 0;
 		padding: 0 1rem;
 	}
 	.preview-head {
@@ -505,9 +536,43 @@
 		background: var(--danger-soft);
 		color: var(--danger);
 	}
-	@media (max-width: 480px) {
-		.preview-head {
-			flex-direction: column;
+	@media (max-width: 560px) {
+		/* Full-screen sheet on phones. */
+		dialog {
+			width: 100%;
+			max-width: 100%;
+			height: 100dvh;
+			max-height: 100dvh;
+			margin: 0;
+			border: 0;
+			border-radius: 0;
+			box-shadow: none;
+		}
+		header {
+			padding: calc(0.75rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.6rem
+				calc(1rem + env(safe-area-inset-left));
+		}
+		.tabs {
+			align-self: stretch;
+		}
+		.tabs button {
+			flex: 1;
+			padding: 0.5em 0.5em;
+		}
+		.results {
+			padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+		}
+		.preview-head img,
+		.cover-placeholder {
+			width: 84px;
+			height: 134px;
+		}
+		footer {
+			padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+		}
+		.create {
+			width: 100%;
+			padding: 0.75em 1em;
 		}
 	}
 </style>
